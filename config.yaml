@@ -1,0 +1,12 @@
+subsets:
+  - continuation
+  - repetition
+  - rhyme
+  - short
+
+wav_dir_path_root: "./tts_data/"
+result_dir_path_root: "./result/"
+corpora_dir_path: "./corpora/"
+wavlm_large_ecapa_tdnn_model_path: "./wavlm_large_finetune.pth"
+
+n_times_per_sample: 5

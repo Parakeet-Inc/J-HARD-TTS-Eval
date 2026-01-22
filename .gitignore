@@ -1,0 +1,6 @@
+__pycache__/
+tts_data/continuation/*.wav
+tts_data/repetition/*.wav
+tts_data/rhyme/*.wav
+tts_data/short/*.wav
+*.pth

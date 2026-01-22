@@ -1,3 +1,0 @@
-CER_best: 0.4614[%]
-CER_average: 5.456[%]
-CER_worst: 16.03[%]

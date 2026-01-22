@@ -4,3 +4,12 @@ tts_data/repetition/*.wav
 tts_data/rhyme/*.wav
 tts_data/short/*.wav
 *.pth
+result/*.txt
+result/continuation/*.txt
+result/continuation/*.jsonl
+result/repetition/*.txt
+result/repetition/*.jsonl
+result/rhyme/*.txt
+result/rhyme/*.jsonl
+result/short/*.txt
+result/short/*.jsonl

@@ -1,4 +1,5 @@
 import json
+import warnings
 from pathlib import Path
 from typing import List
 
@@ -10,6 +11,15 @@ from omegaconf import OmegaConf
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
+
+warnings.filterwarnings(
+    "ignore", message=".*torch.cuda.amp.autocast.*", category=FutureWarning
+)
+
+warnings.filterwarnings(
+    "ignore", message=".*stft with return_complex=False.*", category=UserWarning
+)
+
 
 SAMPLING_RATE = 16000
 CONFIG_PATH = Path("./config.yaml")
@@ -186,6 +196,7 @@ def main():
     print("ASR models loaded.")
 
     # process each subset
+    ids = [i for i in range(cfg.n_times_per_sample)]
     for subset_name in cfg.subsets:
         print(f"Processing subset: {subset_name}")
         corpora_path = Path(cfg.corpora_dir_path) / f"{subset_name}.txt"
@@ -211,8 +222,8 @@ def main():
                 {
                     "file_name": batch["file_name"],
                     "text": batch["text"],
-                    "hypo_whisper": whisper_hypos,
-                    "hypo_reazon": reazon_hypos,
+                    "hypo_whisper": dict(zip(ids, whisper_hypos)),
+                    "hypo_reazon": dict(zip(ids, reazon_hypos)),
                 }
             )
 

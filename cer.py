@@ -61,10 +61,11 @@ def normalize_text(text: str) -> str:
         .replace("z", "ゼット")
     )
 
-    # Convert to Katakana using pyopenjtalk to unify variations in Kanji, Hiragana, Katakana, and numbers
-    # However, shorten texts longer than 200 characters
+    # For text that has become excessively long due to failed synthesis, trim it down.
     if len(text) >= 200:
         text = text[:200]
+
+    # Convert to Katakana using pyopenjtalk to unify variations in Kanji, Hiragana, Katakana, and numbers
     text = pyopenjtalk.g2p(text, kana=True)
 
     # Remove special characters
@@ -85,6 +86,7 @@ def main():
     cfg = OmegaConf.load(CONFIG_PATH)
 
     # cer for each subset
+    ids = [i for i in range(cfg.n_times_per_sample)]
     for subset_name in cfg.subsets:
         # load ASR result
         with open(Path(cfg.result_dir_path_root) / subset_name / "asr.jsonl", "r") as f:
@@ -95,6 +97,7 @@ def main():
         hypo_list = []
         hypo_cer_best_list = []
         hypo_cer_worst_list = []
+        outputs = []
 
         # main loop
         for data in jsonl_data:
@@ -108,14 +111,16 @@ def main():
             cer_worst = float("-inf")
             hypo_cer_best = None
             hypo_cer_worst = None
+            cers = []
 
             # calculate CER for each sample
-            for hypo_whisper, hypo_reazon in zip(
-                data["hypo_whisper"], data["hypo_reazon"]
-            ):
+            # for hypo_whisper, hypo_reazon in zip(
+            #    data["hypo_whisper"], data["hypo_reazon"]
+            # ):
+            for i in ids:
                 # normalize hypothesis
-                hypo_whisper_normalized = normalize_text(hypo_whisper)
-                hypo_reazon_normalized = normalize_text(hypo_reazon)
+                hypo_whisper_normalized = normalize_text(data["hypo_whisper"][str(i)])
+                hypo_reazon_normalized = normalize_text(data["hypo_reazon"][str(i)])
 
                 # CER calculation
                 cer_whisper = jiwer.cer(text_normalized, hypo_whisper_normalized) * 100
@@ -128,6 +133,7 @@ def main():
                 else:
                     cer = cer_reazon
                     hypo = hypo_reazon_normalized
+                cers.append(cer)
 
                 # update best and worst CER and hypothesis
                 if cer < cer_best:
@@ -146,6 +152,14 @@ def main():
             hypo_cer_best_list.append(hypo_cer_best)
             hypo_cer_worst_list.append(hypo_cer_worst)
 
+            # append cer
+            outputs.append(
+                {
+                    "file_name": data["file_name"],
+                    "cer": dict(zip(ids, cers)),
+                }
+            )
+
         # calculate micro CER for the subset
         cer_best = jiwer.cer(text_list, hypo_cer_best_list) * 100
         cer_average = jiwer.cer(text_list_duplicated, hypo_list) * 100
@@ -158,6 +172,9 @@ def main():
                 f"CER_average: {cer_average:#.4g}[%]\n"
                 f"CER_worst: {cer_worst:#.4g}[%]"
             )
+        with open(Path(cfg.result_dir_path_root) / subset_name / "cer.jsonl", "w") as f:
+            for item in outputs:
+                f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

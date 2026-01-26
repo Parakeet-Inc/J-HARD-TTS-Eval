@@ -1,3 +1,4 @@
+import json
 import sys
 import types
 import warnings
@@ -12,10 +13,6 @@ from ecapa_tdnn import ECAPA_TDNN_SMALL
 from omegaconf import OmegaConf
 from tqdm import tqdm
 
-SAMPLING_RATE = 16000
-CONFIG_PATH = Path("./config.yaml")
-EPS = 1e-7
-
 if not hasattr(torchaudio, "set_audio_backend"):
     torchaudio.set_audio_backend = lambda backend: None
 
@@ -29,6 +26,16 @@ warnings.filterwarnings(
     "ignore",
     message="Support for mismatched key_padding_mask and attn_mask is deprecated",
 )
+warnings.filterwarnings(
+    "ignore",
+    message="`torch.nn.utils.weight_norm` is deprecated",
+    category=FutureWarning,
+)
+
+
+SAMPLING_RATE = 16000
+CONFIG_PATH = Path("./config.yaml")
+EPS = 1e-7
 
 
 class WavLMLargeECAPATDNN(torch.nn.Module):
@@ -80,9 +87,16 @@ class WavLMLargeECAPATDNN(torch.nn.Module):
             wav.numpy(), top_db=40, frame_length=512, hop_length=128
         )
 
-        # if the length of the audio is less than 3 seconds, skip
-        if wav.shape[-1] / SAMPLING_RATE < 3.0:
+        # Short audio (< 2s) makes speaker estimation inherently difficult,
+        # and the model was likely not sufficiently trained on such short data.
+        # Therefore, skip such samples to avoid unreliable embeddings.
+        if wav.shape[-1] / SAMPLING_RATE < 2.0:
             return None
+
+        # wavlm was likely pre-trained without long sequences, so performance may drop on long audio.
+        # trim to 20s to avoid this degradation and extract embeddings correctly.
+        if wav.shape[-1] / SAMPLING_RATE > 20.0:
+            wav = wav[:, : SAMPLING_RATE * 20]
 
         # return speaker embedding
         return self.ecapa_tdnn(torch.from_numpy(wav).cuda()).cpu()
@@ -95,12 +109,29 @@ def main():
     # load model
     model = WavLMLargeECAPATDNN(cfg.wavlm_large_ecapa_tdnn_model_path)
 
+    # make spk_sim lists
+    spk_sims = []
+    spk_sims_cer_0_filtered = []
+    spk_sims_cer_below_10_filtered = []
+    spk_sims_cer_below_30_filtered = []
+    spk_sims_cer_below_50_filtered = []
+    spk_sims_cer_below_100_filtered = []
+
     # process each subset
-    all_spk_sims = []
     for subset_name in cfg.subsets:
         print(f"Processing subset: {subset_name}")
 
-        spk_sims = []
+        # load cer result
+        with open(Path(cfg.result_dir_path_root) / subset_name / "cer.jsonl", "r") as f:
+            jsonl_data = [json.loads(line) for line in f.read().splitlines()]
+        cer_result = {item["file_name"]: item["cer"] for item in jsonl_data}
+
+        spk_sims_ = []
+        spk_sims_cer_0_filtered_ = []
+        spk_sims_cer_below_10_filtered_ = []
+        spk_sims_cer_below_30_filtered_ = []
+        spk_sims_cer_below_50_filtered_ = []
+        spk_sims_cer_below_100_filtered_ = []
 
         dataset = load_dataset(
             "Parakeet-Inc/J-HARD-TTS-Eval", subset_name, split="test"
@@ -112,42 +143,100 @@ def main():
             fs_prompt = data["prompt_audio"]["sampling_rate"]
             tts_file_name = data["id"]
 
-            for tts_speech_path in (Path(cfg.wav_dir_path_root) / subset_name).glob(
-                f"{tts_file_name.split('.')[0]}*.wav"
-            ):
+            for i in range(cfg.n_times_per_sample):
                 # load audio files
-                wav_tts, fs_tts = torchaudio.load(tts_speech_path)
+                wav_tts, fs_tts = torchaudio.load(
+                    Path(cfg.wav_dir_path_root)
+                    / subset_name
+                    / (tts_file_name + f"-{i}.wav")
+                )
 
                 # extract speaker embeddings
-                spk_emb_prompt = model(wav_prompt, fs_prompt)
                 spk_emb_tts = model(wav_tts, fs_tts)
                 if spk_emb_tts is None:
                     continue
+                spk_emb_prompt = model(wav_prompt, fs_prompt)
 
                 # speaker similarity
                 spk_sim = torch.nn.functional.cosine_similarity(
                     spk_emb_prompt, spk_emb_tts, dim=1
                 )
-
-                # store the cosine similarity
-                # NOTE: only store if the cosine similarity is greater than 0.1,
-                # this is because if the speaker similarity is too low,
-                # there is a possibility that the generated speech may contain much silence,
-                # and then this sample is eliminated to ensure proper evaluation.
-                if spk_sim > 0.1:
-                    spk_sims.append(spk_sim.item())
+                spk_sims_.append(spk_sim.item())
+                if cer_result[tts_file_name + ".wav"][str(i)] == 0.0:
+                    spk_sims_cer_0_filtered_.append(spk_sim.item())
+                if cer_result[tts_file_name + ".wav"][str(i)] <= 10.0:
+                    spk_sims_cer_below_10_filtered_.append(spk_sim.item())
+                if cer_result[tts_file_name + ".wav"][str(i)] <= 30.0:
+                    spk_sims_cer_below_30_filtered_.append(spk_sim.item())
+                if cer_result[tts_file_name + ".wav"][str(i)] <= 50.0:
+                    spk_sims_cer_below_50_filtered_.append(spk_sim.item())
+                if cer_result[tts_file_name + ".wav"][str(i)] <= 100.0:
+                    spk_sims_cer_below_100_filtered_.append(spk_sim.item())
 
         # output subset average cosine similarity
         with open(
             Path(Path(cfg.result_dir_path_root) / subset_name / "spk_sim.txt"), "w"
         ) as f:
-            f.write(f"{np.mean(spk_sims):#.4g}")
+            if len(spk_sims_) == 0:
+                f.write("spk_sim (no filterd): N/A\n")
+            else:
+                f.write(f"spk_sim (no filterd): {np.mean(spk_sims_):#.4g}\n")
+            if len(spk_sims_cer_0_filtered_) == 0:
+                f.write("spk_sim (cer == 0 filtered): N/A\n")
+            else:
+                f.write(
+                    f"spk_sim (cer == 0 filtered): {np.mean(spk_sims_cer_0_filtered_):#.4g}\n"
+                )
+            if len(spk_sims_cer_below_10_filtered_) == 0:
+                f.write("spk_sim (cer <= 10 filtered): N/A\n")
+            else:
+                f.write(
+                    f"spk_sim (cer <= 10 filtered): {np.mean(spk_sims_cer_below_10_filtered_):#.4g}\n"
+                )
+            if len(spk_sims_cer_below_30_filtered_) == 0:
+                f.write("spk_sim (cer <= 30 filtered): N/A\n")
+            else:
+                f.write(
+                    f"spk_sim (cer <= 30 filtered): {np.mean(spk_sims_cer_below_30_filtered_):#.4g}\n"
+                )
+            if len(spk_sims_cer_below_50_filtered_) == 0:
+                f.write("spk_sim (cer <= 50 filtered): N/A\n")
+            else:
+                f.write(
+                    f"spk_sim (cer <= 50 filtered): {np.mean(spk_sims_cer_below_50_filtered_):#.4g}\n"
+                )
+            if len(spk_sims_cer_below_100_filtered_) == 0:
+                f.write("spk_sim (cer <= 100 filtered): N/A\n")
+            else:
+                f.write(
+                    f"spk_sim (cer <= 100 filtered): {np.mean(spk_sims_cer_below_100_filtered_):#.4g}\n"
+                )
 
-        all_spk_sims.extend(spk_sims)
+        spk_sims.extend(spk_sims_)
+        spk_sims_cer_0_filtered.extend(spk_sims_cer_0_filtered_)
+        spk_sims_cer_below_10_filtered.extend(spk_sims_cer_below_10_filtered_)
+        spk_sims_cer_below_30_filtered.extend(spk_sims_cer_below_30_filtered_)
+        spk_sims_cer_below_50_filtered.extend(spk_sims_cer_below_50_filtered_)
+        spk_sims_cer_below_100_filtered.extend(spk_sims_cer_below_100_filtered_)
 
     # output subset average cosine similarity
     with open(Path(Path(cfg.result_dir_path_root) / "spk_sim_overall.txt"), "w") as f:
-        f.write(f"{np.mean(all_spk_sims):#.4g}\n")
+        f.write(f"spk_sim (no filterd): {np.mean(spk_sims):#.4g}\n")
+        f.write(
+            f"spk_sim (cer == 0 filtered): {np.mean(spk_sims_cer_0_filtered):#.4g}\n"
+        )
+        f.write(
+            f"spk_sim (cer <= 10 filtered): {np.mean(spk_sims_cer_below_10_filtered):#.4g}\n"
+        )
+        f.write(
+            f"spk_sim (cer <= 30 filtered): {np.mean(spk_sims_cer_below_30_filtered):#.4g}\n"
+        )
+        f.write(
+            f"spk_sim (cer <= 50 filtered): {np.mean(spk_sims_cer_below_50_filtered):#.4g}\n"
+        )
+        f.write(
+            f"spk_sim (cer <= 100 filtered): {np.mean(spk_sims_cer_below_100_filtered):#.4g}\n"
+        )
 
 
 if __name__ == "__main__":

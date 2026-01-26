@@ -1,6 +1,4 @@
-# NOTE(imai): this file is from https://github.com/BytedanceSpeech/seed-tts-eval/blob/main/thirdparty/UniSpeech/downstreams/speaker_verification/models/ecapa_tdnn.py
-
-# part of the code is borrowed from https://github.com/lawlict/ECAPA-TDNN
+# this file is from https://github.com/BytedanceSpeech/seed-tts-eval/blob/main/thirdparty/UniSpeech/downstreams/speaker_verification/models/ecapa_tdnn.py
 
 import torch
 import torch.nn as nn

@@ -1,8 +1,8 @@
 subsets:
-  - continuation
+  - short
   - repetition
   - rhyme
-  - short
+  - continuation
 
 wav_dir_path_root: "./tts_data/"
 result_dir_path_root: "./result/"

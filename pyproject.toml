@@ -12,6 +12,7 @@ dependencies = [
     "omegaconf>=2.3.0",
     "pyopenjtalk>=0.4.1",
     "reazonspeech-espnet-asr",
+    "soxr>=1.0.0",
     "torchcodec>=0.9.1",
     "transformers>=4.57.6",
 ]

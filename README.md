@@ -274,12 +274,23 @@ If you use this benchmark in your research, please cite our paper:
 Shuhei Imai, et al. "A Study on a High-Diﬃculty Japanese Text-to-Speech Corpus Specialized for Sequence Consistency Evaluation." Proceedings of the 2025 Autumn Meeting of the Acoustical Society of Japan, Sept. 2025.
 ```
 
-**BibTeX:**
+**BibTeX (en):**
 ```bibtex
 @inproceedings{imai2025jhard,
   author    = {Imai, Shuhei and Enomoto, Haruhisa and Kaneko, Takeshi and Nakamura, Taiki},
   title     = {A Study on a High-Diﬃculty Japanese Text-to-Speech Corpus Specialized for Sequence Consistency Evaluation},
   booktitle = {Proc. ASJ},
+  year      = {2025},
+  month     = {9}
+}
+```
+
+**BibTeX (ja):**
+```bibtex
+@inproceedings{imai2025jhard,
+  author    = {今井, 柊平 and 榎本, 悠久 and 金子, 剛士 and 中村, 泰貴},
+  title     = {系列整合性評価に特化した高難度日本語テキスト音声合成コーパスの検討},
+  booktitle = {音講論},
   year      = {2025},
   month     = {9}
 }

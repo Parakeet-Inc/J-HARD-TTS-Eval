@@ -178,9 +178,9 @@ def main():
             Path(Path(cfg.result_dir_path_root) / subset_name / "spk_sim.txt"), "w"
         ) as f:
             if len(spk_sims_) == 0:
-                f.write("spk_sim (no filterd): N/A\n")
+                f.write("spk_sim (): N/A\n")
             else:
-                f.write(f"spk_sim (no filterd): {np.mean(spk_sims_):#.4g}\n")
+                f.write(f"spk_sim (Unfiltered): {np.mean(spk_sims_):#.4g}\n")
             if len(spk_sims_cer_0_filtered_) == 0:
                 f.write("spk_sim (cer == 0 filtered): N/A\n")
             else:
@@ -221,7 +221,7 @@ def main():
 
     # output subset average cosine similarity
     with open(Path(Path(cfg.result_dir_path_root) / "spk_sim_overall.txt"), "w") as f:
-        f.write(f"spk_sim (no filterd): {np.mean(spk_sims):#.4g}\n")
+        f.write(f"spk_sim (Unfiltered): {np.mean(spk_sims):#.4g}\n")
         f.write(
             f"spk_sim (cer == 0 filtered): {np.mean(spk_sims_cer_0_filtered):#.4g}\n"
         )

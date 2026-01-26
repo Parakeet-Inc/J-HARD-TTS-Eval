@@ -7,7 +7,7 @@ Note: Results in this README may differ slightly from the paper due to refactori
 
 
 ## Overview
-This repository provides the evaluation code for **J-HARD-TTS-Eval**, a benchmark designed to evaluate the robustness of **autoregressive Japanese Text-To-Speech(TTS) models**. This benchmark consists of the following 4 subsets, each designed to assess model robustness from a different perspective.
+This repository provides the evaluation code for **J-HARD-TTS-Eval**, a benchmark designed to evaluate the robustness of **autoregressive Japanese Text-To-Speech (TTS) models**. This benchmark consists of the following 4 subsets, each designed to assess model robustness from a different perspective.
 
 | Subset | Evaluation Objective |
 | :--- | :--- |
@@ -23,7 +23,7 @@ Each line in the files contains data in the following format:
 [prompt speech file name] | [prompt speech transcript] | [target file name] | [target text]
 ```
 
-To focus on the robustness of the TTS model itself, target text is designed to minimize the impact of whether G2P (Grapheme-to-Phoneme) is used or not, as well as its potential performance discrepancies.
+To focus on the robustness of the TTS model itself, the target text is designed to minimize the impact of whether G2P (Grapheme-to-Phoneme) is used or not, as well as its potential performance discrepancies.
 Specifically, we excluded words with ambiguous readings, such as **"今日"** (which can be read as *Kyou* or *Konnichi*) and **"17"** (*Juushichi* or *Juunana*).
 Additionally, the Kanji characters used are strictly limited to the scope of **Joyo Kanji** (常用漢字; Japanese regular-use characters).
 
@@ -149,7 +149,7 @@ This will save the CER results as cer.txt within each subset directory under res
 
 ## 3. Speaker similarity
 We use [WavLM-Large [4] ECAPA-TDNN [5]](https://drive.google.com/file/d/1-aE1NfzpRCLxA4GUxX9ITI3F9LlbtEGP/view?pli=1) to calculate the Speaker Similarity between the prompt speech and the zero-shot synthesized speech, following the approach of Seed-TTS-Eval.
-To examine the impact of content accuracy on Speaker Similarity scores, we calculate scores by filtering data based on CER thresholds (`0`, `10`, `30`, `50`, `100` and `no filtered`).
+To examine the impact of content accuracy on Speaker Similarity scores, we calculate scores by filtering data based on CER thresholds (`0`, `10`, `30`, `50`, `100` and `Unfiltered`).
 We apply the following preprocessing and filtering to the audio:
 
 - **Maximum Length Limit (20s)**:
@@ -179,6 +179,7 @@ result/
 We present the evaluation results for the following TTS models that support Japanese.
 In addition to recent LM-based zero-shot models, we also evaluated conventional autoregressive methods (Transformer-TTS, Tacotron2) and non-autoregressive methods (FastSpeech2) trained on the [JSUT corpus](https://sites.google.com/site/shinnosuketakamichi/publication/jsut) [6] for reference.
 
+Note: Parenthesized values in the "# Params" column indicate the AR model parameters without the embedding and output head layers.
 | Task | Model | Release Date | AR? | # Params | Paper Link |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | Zero-shot | [XTTS-v2](https://huggingface.co/coqui/XTTS-v2) | 2023-12 | Yes | 441.0M (424.2M) | [XTTS: a Massively Multilingual Zero-Shot Text-to-Speech Model](https://arxiv.org/abs/2406.04904) |
@@ -214,7 +215,7 @@ In addition to recent LM-based zero-shot models, we also evaluated conventional 
 |  | FishAudio-S1-mini | 11.81 | 35.19 | 79.90 |
 |  | Qwen3-TTS-12Hz-0.6B-Base | 6.799 | 13.01 | 21.49 |
 |  | Qwen3-TTS-12Hz-1.7B-Base | **5.261** | **10.57** | **17.67** |
-| Single speaker (JSUT) | Tacotron2 | - | 7.940 | - |
+| Single Speaker (JSUT) | Tacotron2 | - | 7.940 | - |
 |  | Transformer-TTS | - | 15.24 | - |
 |  | FastSpeech2 | - | 3.623 | - |
 
@@ -226,7 +227,7 @@ In addition to recent LM-based zero-shot models, we also evaluated conventional 
 |  | FishAudio-S1-mini | 0.4966 | 1.313 | **3.015** |
 |  | Qwen3-TTS-12Hz-0.6B-Base | 2.128 | 4.292 | 7.627 |
 |  | Qwen3-TTS-12Hz-1.7B-Base | 0.6031 | 2.469 | 4.753 |
-| Single speaker (JSUT) | Tacotron2 | - | 0.07095 | - |
+| Single Speaker (JSUT) | Tacotron2 | - | 0.07095 | - |
 |  | Transformer-TTS | - | 3.086 | - |
 |  | FastSpeech2 | - | 0.0 | - |
 
@@ -238,12 +239,12 @@ In addition to recent LM-based zero-shot models, we also evaluated conventional 
 |  | FishAudio-S1-mini | 0.4037 | **1.257** | **2.364** |
 |  | Qwen3-TTS-12Hz-0.6B-Base | 0.7497 | 2.076 | 4.037 |
 |  | Qwen3-TTS-12Hz-1.7B-Base | 0.5767 | 1.488 | 2.884 |
-| Single speaker (JSUT) | Tacotron2 | - | 0.05767 | - |
+| Single Speaker (JSUT) | Tacotron2 | - | 0.05767 | - |
 |  | Transformer-TTS | - | 2.249 | - |
 |  | FastSpeech2 | - | 0.05767 | - |
 
 ## Speaker similarity
-|  | CER=0 | CER<=10 | CER<=30 | CER<=50 | CER<=100 | no filterd |
+|  | CER=0 | CER<=10 | CER<=30 | CER<=50 | CER<=100 | Unfiltered |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | XTTS-v2 | 0.6267 | 0.6273 | 0.6218 | 0.6178 | 0.6155 | 0.6145 |
 | CosyVoice2-0.5B | 0.7325 | 0.7251 | 0.7152 | 0.7087 | 0.6858 | 0.6848 |
@@ -278,7 +279,7 @@ Shuhei Imai, et al. "A Study on a High-Diﬃculty Japanese Text-to-Speech Corpus
 ```bibtex
 @inproceedings{imai2025jhard,
   author    = {Imai, Shuhei and Enomoto, Haruhisa and Kaneko, Takeshi and Nakamura, Taiki},
-  title     = {A Study on a High-Diﬃculty Japanese Text-to-Speech Corpus Specialized for Sequence Consistency Evaluation},
+  title     = {A Study on a High-Difficulty Japanese Text-to-Speech Corpus Specialized for Sequence Consistency Evaluation},
   booktitle = {Proc. ASJ},
   year      = {2025},
   month     = {9}

@@ -179,16 +179,16 @@ result/
 We present the evaluation results for the following TTS models that support Japanese.
 In addition to recent LM-based zero-shot models, we also evaluated conventional autoregressive methods (Transformer-TTS, Tacotron2) and non-autoregressive methods (FastSpeech2) trained on the [JSUT corpus](https://sites.google.com/site/shinnosuketakamichi/publication/jsut) [6] for reference.
 
-| Task | Model | AR? | # Params | Paper Link |
-| :--- | :--- | :--- | :--- | :--- |
-| Zero-shot | [CosyVoice2-0.5B](https://github.com/FunAudioLLM/CosyVoice) | Yes | AR: 505.8M (357.9M)<br>NAR(Flow-Matching): 112.5M | [CosyVoice 2: Scalable Streaming Speech Synthesis with Large Language Models](https://arxiv.org/abs/2412.10117) |
-|  | [OpenAudio S1-mini](https://huggingface.co/fishaudio/openaudio-s1-mini) | Yes | AR: 801.4M (440.5M)<br>NAR: 58.73M | [Fish-Speech: Leveraging Large Language Models for Advanced Multilingual Text-to-Speech Synthesis](https://arxiv.org/abs/2411.01156) |
-|  | [XTTS-v2](https://huggingface.co/coqui/XTTS-v2) | Yes | 441.0M (424.2M) | [XTTS: a Massively Multilingual Zero-Shot Text-to-Speech Model](https://arxiv.org/abs/2406.04904) |
-|  | [Qwen3-TTS-12Hz-0.6B-Base](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base) | Yes | AR: <br>Other:  | [Qwen3-TTS Technical Report](https://arxiv.org/abs/2601.15621) |
-|  | [Qwen3-TTS-12Hz-1.7B-Base](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base) | Yes | AR: <br>Other:  | [Qwen3-TTS Technical Report](https://arxiv.org/abs/2601.15621) |
-| Single Speaker (JSUT) | [Transformer-TTS](https://huggingface.co/espnet/kan-bayashi_jsut_transformer_accent_with_pause) | Yes | 33.04M | [Neural Speech Synthesis with Transformer Network](https://arxiv.org/abs/1809.08895) |
-|  | [Tacotron2](https://huggingface.co/espnet/kan-bayashi_jsut_tacotron2_accent_with_pause) | Yes | 26.66M | [Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions](https://arxiv.org/abs/1712.05884) |
-|  | [FastSpeech2](https://huggingface.co/espnet/kan-bayashi_jsut_fastspeech2_accent_with_pause) | No | 37.12M | [FastSpeech 2: Fast and High-Quality End-to-End Text to Speech](https://arxiv.org/abs/2006.04558) |
+| Task | Model | Release Date | AR? | # Params | Paper Link |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Zero-shot | [XTTS-v2](https://huggingface.co/coqui/XTTS-v2) | 2023-12 | Yes | 441.0M (424.2M) | [XTTS: a Massively Multilingual Zero-Shot Text-to-Speech Model](https://arxiv.org/abs/2406.04904) |
+|  | [CosyVoice2-0.5B](https://github.com/FunAudioLLM/CosyVoice) | 2024-05 | Yes | AR: 505.8M (357.9M)<br>NAR: 112.5M | [CosyVoice 2: Scalable Streaming Speech Synthesis with Large Language Models](https://arxiv.org/abs/2412.10117) |
+|  | [FishAudio-S1-mini](https://huggingface.co/fishaudio/openaudio-s1-mini)<br>(OpenAudio S1-mini) | 2025-05 | Yes | AR: 801.4M (440.5M)<br>NAR: 58.73M | [Fish-Speech: Leveraging Large Language Models for Advanced Multilingual Text-to-Speech Synthesis](https://arxiv.org/abs/2411.01156) |
+|  | [Qwen3-TTS-12Hz-0.6B-Base](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base) | 2026-01 | Yes | AR: 764.2M (437.3M)<br>NAR: 141.6M | [Qwen3-TTS Technical Report](https://arxiv.org/abs/2601.15621) |
+|  | [Qwen3-TTS-12Hz-1.7B-Base](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base) | 2026-01 | Yes | AR: 1.703B (1.403B)<br>NAR: 175.1M | [Qwen3-TTS Technical Report](https://arxiv.org/abs/2601.15621) |
+| Single Speaker (JSUT) | [Tacotron2](https://huggingface.co/espnet/kan-bayashi_jsut_tacotron2_accent_with_pause) | - | Yes | 26.66M | [Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions](https://arxiv.org/abs/1712.05884) |
+|  | [Transformer-TTS](https://huggingface.co/espnet/kan-bayashi_jsut_transformer_accent_with_pause) | - | Yes | 33.04M | [Neural Speech Synthesis with Transformer Network](https://arxiv.org/abs/1809.08895) |
+|  | [FastSpeech2](https://huggingface.co/espnet/kan-bayashi_jsut_fastspeech2_accent_with_pause) | - | No | 37.12M | [FastSpeech 2: Fast and High-Quality End-to-End Text to Speech](https://arxiv.org/abs/2006.04558) |
 
 
 
@@ -197,57 +197,57 @@ In addition to recent LM-based zero-shot models, we also evaluated conventional 
 ### Subset: Short
 | Task | Model | Best [%] | Average [%] | Worst [%] |
 | :--- | :--- | :--- | :--- | :--- |
-| Zero-shot | CosyVoice2-0.5B | 22.83 | 71.50 | 123.6 |
-|  | OpenAudio S1-mini | **0.7874** | 15.59 | 48.82 |
-|  | XTTS-v2 | 5.512 | 14.33 | 31.50 |
+| Zero-shot | XTTS-v2 | 5.512 | 14.33 | 31.50 |
+|  | CosyVoice2-0.5B | 22.83 | 71.50 | 123.6 |
+|  | FishAudio-S1-mini | **0.7874** | 15.59 | 48.82 |
 |  | Qwen3-TTS-12Hz-0.6B-Base | 7.087 | 22.36 | 45.67 |
 |  | Qwen3-TTS-12Hz-1.7B-Base | 1.575 | **4.724** | **11.02** |
-| Single Speaker (JSUT) | Transformer-TTS | - | 115.7 | - |
-|  | Tacotron2 | - | 5.512 | - |
+| Single Speaker (JSUT) | Tacotron2 | - | 5.512 | - |
+|  | Transformer-TTS | - | 115.7 | - |
 |  | FastSpeech2 | - | 9.449 | - |
 
 ### Subset: Repetition
 | Task | Model | Best [%] | Average [%] | Worst [%] |
 | :--- | :--- | :--- | :--- | :--- |
-| Zero-shot | CosyVoice2-0.5B | 8.139 | 15.25 | 28.68 |
-|  | OpenAudio S1-mini | 11.81 | 35.19 | 79.90 |
-|  | XTTS-v2 | 7.792 | 12.12 | 18.61 |
+| Zero-shot | XTTS-v2 | 7.792 | 12.12 | 18.61 |
+|  | CosyVoice2-0.5B | 8.139 | 15.25 | 28.68 |
+|  | FishAudio-S1-mini | 11.81 | 35.19 | 79.90 |
 |  | Qwen3-TTS-12Hz-0.6B-Base | 6.799 | 13.01 | 21.49 |
 |  | Qwen3-TTS-12Hz-1.7B-Base | **5.261** | **10.57** | **17.67** |
-| Single speaker (JSUT) | Transformer-TTS | - | 15.24 | - |
-|  | Tacotron2 | - | 7.940 | - |
+| Single speaker (JSUT) | Tacotron2 | - | 7.940 | - |
+|  | Transformer-TTS | - | 15.24 | - |
 |  | FastSpeech2 | - | 3.623 | - |
 
 ### Subset: Rhyme
 | Task | Model | Best [%] | Average [%] | Worst [%] |
 | :--- | :--- | :--- | :--- | :--- |
-| Zero-shot | CosyVoice2-0.5B | 0.1774 | 1.398 | 4.576 |
-|  | OpenAudio S1-mini | 0.4966 | 1.313 | **3.015** |
-|  | XTTS-v2 | **0.1419** | **1.064** | 3.122 |
+| Zero-shot | XTTS-v2 | **0.1419** | **1.064** | 3.122 |
+|  | CosyVoice2-0.5B | 0.1774 | 1.398 | 4.576 |
+|  | FishAudio-S1-mini | 0.4966 | 1.313 | **3.015** |
 |  | Qwen3-TTS-12Hz-0.6B-Base | 2.128 | 4.292 | 7.627 |
 |  | Qwen3-TTS-12Hz-1.7B-Base | 0.6031 | 2.469 | 4.753 |
-| Single speaker (JSUT) | Transformer-TTS | - | 3.086 | - |
-|  | Tacotron2 | - | 0.07095 | - |
+| Single speaker (JSUT) | Tacotron2 | - | 0.07095 | - |
+|  | Transformer-TTS | - | 3.086 | - |
 |  | FastSpeech2 | - | 0.0 | - |
 
 ### Subset: Continuation
 | Task | Model | Best [%] | Average [%] | Worst [%] |
 | :--- | :--- | :--- | :--- | :--- |
-| Zero-shot | CosyVoice2-0.5B | 0.4614 | 5.456 | 16.03 |
-|  | OpenAudio S1-mini | 0.4037 | **1.257** | **2.364** |
-|  | XTTS-v2 | **0.3460** | 1.396 | 3.287 |
+| Zero-shot | XTTS-v2 | **0.3460** | 1.396 | 3.287 |
+|  | CosyVoice2-0.5B | 0.4614 | 5.456 | 16.03 |
+|  | FishAudio-S1-mini | 0.4037 | **1.257** | **2.364** |
 |  | Qwen3-TTS-12Hz-0.6B-Base | 0.7497 | 2.076 | 4.037 |
 |  | Qwen3-TTS-12Hz-1.7B-Base | 0.5767 | 1.488 | 2.884 |
-| Single speaker (JSUT) | Transformer-TTS | - | 2.249 | - |
-|  | Tacotron2 | - | 0.05767 | - |
+| Single speaker (JSUT) | Tacotron2 | - | 0.05767 | - |
+|  | Transformer-TTS | - | 2.249 | - |
 |  | FastSpeech2 | - | 0.05767 | - |
 
 ## Speaker similarity
 |  | CER=0 | CER<=10 | CER<=30 | CER<=50 | CER<=100 | no filterd |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| CosyVoice2-0.5B | 0.7325 | 0.7251 | 0.7152 | 0.7087 | 0.6858 | 0.6848 |
-| OpenAudio S1-mini | 0.6864 | 0.6833 | 0.6722 | 0.6646 | 0.6531 | 0.6440 |
 | XTTS-v2 | 0.6267 | 0.6273 | 0.6218 | 0.6178 | 0.6155 | 0.6145 |
+| CosyVoice2-0.5B | 0.7325 | 0.7251 | 0.7152 | 0.7087 | 0.6858 | 0.6848 |
+| FishAudio-S1-mini | 0.6864 | 0.6833 | 0.6722 | 0.6646 | 0.6531 | 0.6440 |
 | Qwen3-TTS-12Hz-0.6B-Base | 0.7419 | 0.7496 | 0.7451 | 0.7418 | 0.7354 | 0.7298 |
 | Qwen3-TTS-12Hz-1.7B-Base | 0.7623 | 0.7614 | 0.7549 | 0.7539 | 0.7537 | **0.7530** |
 

@@ -1,9 +1,8 @@
 # J-HARD-TTS-Eval
+[![Paper](https://img.shields.io/badge/Paper-Japanese-red)](https://drive.google.com/file/d/1CZ74Nvmca7nneK2zCfRyogFAMVLUx0Ik/view?usp=drive_link)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue)](https://huggingface.co/datasets/Parakeet-Inc/J-HARD-TTS-Eval)
 
-## Paper
-[系列整合性評価に特化した高難度日本語テキスト音声合成コーパスの検討 (A Study on a High-Difficulty Japanese Text-to-Speech Corpus Specialized for Sequence Consistency Evaluation)](https://drive.google.com/file/d/1CZ74Nvmca7nneK2zCfRyogFAMVLUx0Ik/view?usp=drive_link) (Japanese article)
-
-Note: Results in this README may differ slightly from the paper due to refactoring performed during the code release process.
+> **Note**: Results in this README may differ slightly from the paper due to refactoring performed during the code release process.
 
 
 ## Overview
@@ -155,7 +154,7 @@ We apply the following preprocessing and filtering to the audio:
 - **Maximum Length Limit (20s)**:
     Taking into account the training data distribution of the WavLM model, audio exceeding 20 seconds is truncated to 20 seconds. This prevents performance degradation caused by inputs of unexpected lengths.
 - **Minimum Length Limit (2s)**:
-    Extracting accurate speaker embeddings from extremely short speech is difficult. Additionally, when synthesis fails in the **Short** subset, the output often consists only of silence or noise; since these lack speaker characteristics, they are unsuitable for evaluation. Therefore, speech clips shorter than 2 seconds (after trimming leading and trailing silence) are excluded from the calculation (Note: This results in most data in the **Short** subset being skipped).
+    Extracting accurate speaker embeddings from extremely short speech is difficult. Additionally, when synthesis fails in the **Short** subset, the output often consists only of silence or noise; since these lack speaker characteristics, they are unsuitable for evaluation. Therefore, speech clips shorter than 2 seconds (after trimming leading and trailing silence) are excluded from the calculation (**Note**: This results in most data in the **Short** subset being skipped).
 
 Run the following command to calculate Speaker Similarity:
 ```sh
@@ -179,7 +178,8 @@ result/
 We present the evaluation results for the following TTS models that support Japanese.
 In addition to recent LM-based zero-shot models, we also evaluated conventional autoregressive methods (Transformer-TTS, Tacotron2) and non-autoregressive methods (FastSpeech2) trained on the [JSUT corpus](https://sites.google.com/site/shinnosuketakamichi/publication/jsut) [6] for reference.
 
-Note: Parenthesized values in the "# Params" column indicate the AR model parameters without the embedding and output head layers.
+**Note**: Parenthesized values in the "# Params" column indicate the AR model parameters without the embedding and output head layers.
+
 | Task | Model | Release Date | AR? | # Params | Paper Link |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | Zero-shot | [XTTS-v2](https://huggingface.co/coqui/XTTS-v2) | 2023-12 | Yes | 441.0M (424.2M) | [XTTS: a Massively Multilingual Zero-Shot Text-to-Speech Model](https://arxiv.org/abs/2406.04904) |

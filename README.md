@@ -136,7 +136,7 @@ First, run the following command to perform ASR:
 ```sh
 $ uv run asr.py
 ```
-The ASR results will be saved as asr.jsonl within each subset directory under results/.
+The ASR results will be saved as asr.jsonl within each subset directory under result/.
 
 Next, calculate the CER. For CER calculation, the text is first normalized and then converted into Kana (phonetic characters) using [pyopenjtalk](https://github.com/r9y9/pyopenjtalk).
 This is because the benchmark focuses on the TTS model's robustness in correctly pronouncing the content.
@@ -144,7 +144,7 @@ Converting to Kana allows us to uniformly handle cases where the ASR model trans
 ```sh
 $ uv run cer.py
 ```
-This will save the CER results as cer.txt within each subset directory under results/. Additionally, the CER for each file and its each 5 run is saved as cer.jsonl. This file will be used in the subsequent Speaker Similarity evaluation.
+This will save the CER results as cer.txt within each subset directory under result/. Additionally, the CER for each file and its each 5 run is saved as cer.jsonl. This file will be used in the subsequent Speaker Similarity evaluation.
 
 
 ## 3. Speaker similarity
@@ -161,11 +161,11 @@ Run the following command to calculate Speaker Similarity:
 ```sh
 $ uv run spk_sim.py
 ```
-The Speaker Similarity results for each subset will be saved as spk_sim.txt within each subset directory under results/. Additionally, the aggregated results for all utterances will be saved as results/spk_sim_overall.txt.
+The Speaker Similarity results for each subset will be saved as spk_sim.txt within each subset directory under result/. Additionally, the aggregated results for all utterances will be saved as results/spk_sim_overall.txt.
 
-Once all evaluations are complete, the results/ directory will be structured as follows:
+Once all evaluations are complete, the result/ directory will be structured as follows:
 ```text
-results/
+result/
 ├── <Subset Name>/  # (short, repetition, rhyme, continuation)
 │   ├── asr.jsonl
 │   ├── cer.jsonl

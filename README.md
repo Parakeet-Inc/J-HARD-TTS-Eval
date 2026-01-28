@@ -2,7 +2,8 @@
 [![Paper](https://img.shields.io/badge/Paper-Japanese-red)](https://drive.google.com/file/d/1CZ74Nvmca7nneK2zCfRyogFAMVLUx0Ik/view?usp=drive_link)
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue)](https://huggingface.co/datasets/Parakeet-Inc/J-HARD-TTS-Eval)
 
-> **Note**: Results in this README may differ slightly from the paper due to refactoring performed during the code release process.
+> [!NOTE]
+> Results in this README may differ slightly from the paper due to refactoring performed during the code release process.
 
 
 ## Overview
@@ -178,7 +179,8 @@ result/
 We present the evaluation results for the following TTS models that support Japanese.
 In addition to recent LM-based zero-shot models, we also evaluated conventional autoregressive methods (Transformer-TTS, Tacotron2) and non-autoregressive methods (FastSpeech2) trained on the [JSUT corpus](https://sites.google.com/site/shinnosuketakamichi/publication/jsut) [6] for reference.
 
-**Note**: Parenthesized values in the "# Params" column indicate the AR model parameters without the embedding and output head layers.
+> [!Note]
+> Parenthesized values in the "# Params" column indicate the AR model parameters without the embedding and output head layers.
 
 | Task | Model | Release Date | AR? | # Params | Paper Link |
 | :--- | :--- | :--- | :--- | :--- | :--- |
